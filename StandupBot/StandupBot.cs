@@ -9,9 +9,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Collections.Generic;
-using StandupBot.Models.Dialog;
-using StandupBot.Models.StandupForm;
-using StandupBot.Models;
+using Slack.NetStandard;
+using Slack.NetStandard.Messages;
+using Slack.NetStandard.Messages.Elements;
+using Slack.NetStandard.Messages.Blocks;
+using Slack.NetStandard.Objects;
 
 namespace StandupBot
 {
@@ -43,33 +45,42 @@ namespace StandupBot
         {
             string requestBody = req.Form["payload"]; //await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
+            string triggerId = data.trigger_id.ToString();
 
-            string message = $"Slack webhook triggered";
             log.LogInformation(requestBody);
 
-            var dialog = new DialogRoot();
-            dialog.blocks = new Block[]
-            { new Block
-                {
-                    type = "section",
-                    text = new TextBlock
+            var view = new View();
+            view.Type = "modal";
+            view.Title = "Daily Standup";
+            view.Submit = new PlainText("Submit");
+            view.Close = new PlainText("Close");
+            view.Blocks = new IMessageBlock[]
+                { new Input
                     {
-                        type = "mrkdwn",
-                        text = "It worked!!!"
-                    },
-                        accessory = new Accessory {
-                            type = "button",
-                            text = new TextBlock
-                            {
-                                type = "plain_text",
-                                text = "Celebrate"
-                            },
-                            value = "submit"
+                        Label = new PlainText("What did you accomplish yesterday"),
+                        Element = new PlainTextInput
+                        {
+                            Multiline = true,
+                            InitialValue = "1. \n2. \n3."
                         }
-                }
-            };
+                    },
+                    new Input
+                    {
+                        Label = new PlainText("What is your plan for today?"),
+                        Element = new PlainTextInput
+                        {
+                            Multiline = true,
+                            InitialValue = "1. \n2. \n3."
+                        }
+                    },
+                    new Input
+                    {
+                        Label = new PlainText("Any blockers?"),
+                        Element = new PlainTextInput()
+                    }
+                };
 
-            await SendSlackMessage(dialog, log);
+            await SendSlackMessage(view, log);
         }
 
 
@@ -78,29 +89,19 @@ namespace StandupBot
            [TimerTrigger("0 */1 * * * *")] TimerInfo myTimer,
            ILogger log)
         {
-            var dialog = new DialogRoot();
-            dialog.blocks = new Block[]
-            { new Block
+            var message = new Message();
+            message.Blocks = new List<IMessageBlock>();
+            message.Blocks.Add(new Section
+            {
+                Text = new PlainText("Good morning, slacker! It's standup time!!!"),
+                Accessory = new Button
                 {
-                    type = "section",
-                    text = new TextBlock
-                    {
-                        type = "mrkdwn",
-                        text = "Good morning, slacker! It's standup time!!!"
-                    },
-                        accessory = new Accessory {
-                            type = "button",
-                            text = new TextBlock
-                            {
-                                type = "plain_text",
-                                text = "Submit"
-                            },
-                            value = "submit"
-                        }
+                    Text = "Submit",
+                    Value = "Submit"
                 }
-        };
+            });
 
-            await SendSlackMessage(dialog, log);
+            await SendSlackMessage(message, log);
         }
 
 
@@ -126,8 +127,7 @@ namespace StandupBot
 
         public static string GetEnvironmentVariable(string name)
         {
-            return name + ": " +
-                System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
+            return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
         }
     }
 }
