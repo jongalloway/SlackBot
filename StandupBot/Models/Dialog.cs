@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace StandupBotModels.Dialog
+namespace StandupBot.Models.Dialog
 {
     public class Accessory
     {
@@ -8,7 +8,7 @@ namespace StandupBotModels.Dialog
         public string type { get; set; }
 
         [JsonProperty("text")]
-        public Text text { get; set; }
+        public TextBlock text { get; set; }
 
         [JsonProperty("value")]
         public string value { get; set; }
@@ -20,24 +20,15 @@ namespace StandupBotModels.Dialog
         public string type { get; set; }
 
         [JsonProperty("text")]
-        public Text text { get; set; }
+        public TextBlock text { get; set; }
 
         [JsonProperty("accessory")]
         public Accessory accessory { get; set; }
     }
 
-    public class RootObject
+    public class DialogRoot
     {
         [JsonProperty("blocks")]
         public Block[] blocks { get; set; }
-    }
-
-    public class Text
-    {
-        [JsonProperty("type")]
-        public string type { get; set; }
-
-        [JsonProperty("text")]
-        public string text { get; set; }
     }
 }

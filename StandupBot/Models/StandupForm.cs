@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace StandupBotModels.StandupForm
+namespace StandupBot.Models.StandupForm
 {
-    public class Accessory
+    public class Checkbox
     {
         [JsonProperty("type")]
         public string Type { get; set; }
@@ -104,7 +104,7 @@ namespace StandupBotModels.StandupForm
         public string TextContent { get; set; }
 
         [JsonProperty("accessory")]
-        public Accessory Accessory { get; set; }
+        public Checkbox Checkbox { get; set; }
     }
 
     public class Title

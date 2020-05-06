@@ -9,10 +9,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Collections.Generic;
+using StandupBot.Models.Dialog;
+using StandupBot.Models.StandupForm;
+using StandupBot.Models;
 
 namespace StandupBot
 {
-    public static class StandupBot
+    public static class StandupBotFunction
     {
         [FunctionName(nameof(MessageTeam))]
         public static async Task<IActionResult> MessageTeam(
@@ -44,19 +47,19 @@ namespace StandupBot
             string message = $"Slack webhook triggered";
             log.LogInformation(requestBody);
 
-            var dialog = new StandupBotModels.Dialog.RootObject();
-            dialog.blocks = new StandupBotModels.Dialog.Block[]
-            { new StandupBotModels.Dialog.Block
+            var dialog = new DialogRoot();
+            dialog.blocks = new Block[]
+            { new Block
                 {
                     type = "section",
-                    text = new StandupBotModels.Dialog.Text
+                    text = new TextBlock
                     {
                         type = "mrkdwn",
                         text = "It worked!!!"
                     },
-                        accessory = new StandupBotModels.Dialog.Accessory {
+                        accessory = new Accessory {
                             type = "button",
-                            text = new StandupBotModels.Dialog.Text
+                            text = new TextBlock
                             {
                                 type = "plain_text",
                                 text = "Celebrate"
@@ -75,19 +78,19 @@ namespace StandupBot
            [TimerTrigger("0 */1 * * * *")] TimerInfo myTimer,
            ILogger log)
         {
-            var dialog = new StandupBotModels.Dialog.RootObject();
-            dialog.blocks = new StandupBotModels.Dialog.Block[]
-            { new StandupBotModels.Dialog.Block
+            var dialog = new DialogRoot();
+            dialog.blocks = new Block[]
+            { new Block
                 {
                     type = "section",
-                    text = new StandupBotModels.Dialog.Text
+                    text = new TextBlock
                     {
                         type = "mrkdwn",
                         text = "Good morning, slacker! It's standup time!!!"
                     },
-                        accessory = new StandupBotModels.Dialog.Accessory {
+                        accessory = new Accessory {
                             type = "button",
-                            text = new StandupBotModels.Dialog.Text
+                            text = new TextBlock
                             {
                                 type = "plain_text",
                                 text = "Submit"
